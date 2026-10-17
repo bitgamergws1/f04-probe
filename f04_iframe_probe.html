@@ -1,0 +1,22 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>f04 probe</title>
+<!-- Host this file on YOUR OWN HTTPS server (not a Meesho domain). The Python probe loads it
+     as a cross-origin iframe inside an authorised Meesho WebView. It only reports whether the
+     bridge is reachable and whether the returned JSON contains an Xo key. It never prints the token. -->
+<script>
+(function () {
+  var r = { origin: location.origin, bridgeType: typeof window.xoox };
+  try {
+    if (window.xoox && typeof window.xoox.getParams === 'function') {
+      var p = window.xoox.getParams();
+      r.len = p.length;
+      r.empty = (p === '');
+      r.hasXoKey = (p.indexOf('"Xo"') !== -1);
+    }
+  } catch (e) {
+    r.err = String(e);
+  }
+  console.log('F04RESULT ' + JSON.stringify(r));
+})();
+</script>
