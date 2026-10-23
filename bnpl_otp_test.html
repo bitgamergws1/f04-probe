@@ -24,6 +24,15 @@
 <pre id="log"></pre>
 
 <script>
+// Stand-in for the page-defined OTP receiver. The real BNPL page defines this function;
+// the unsafe branch calls it first, so without it the marker statement after it never runs.
+window.onOtpSmsReceived = function (otp) {
+  var n = (otp === undefined || otp === null) ? 0 : String(otp).length;
+  var el = document.getElementById('log');
+  if (el) { el.textContent = new Date().toISOString() + '  onOtpSmsReceived called (' + n + ' chars)\n' + el.textContent; }
+};
+</script>
+<script>
 (function () {
   var logEl = document.getElementById('log');
   var statusEl = document.getElementById('status');
