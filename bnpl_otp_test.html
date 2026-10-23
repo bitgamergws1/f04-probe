@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>f04 BNPL OTP listener test (own build only)</title>
+<style>
+  body { font-family: sans-serif; padding: 12px; }
+  button { font-size: 16px; padding: 10px 14px; margin: 6px 0; width: 100%; }
+  pre { background: #f3f3f3; padding: 8px; white-space: pre-wrap; word-break: break-word; font-size: 13px; }
+</style>
+</head>
+<body>
+<h3>F-04 BNPL OTP listener harness</h3>
+<p>Own test build only. This page does not read any session value and does not send any data.</p>
+
+<pre id="status">loading...</pre>
+
+<button id="start">1. Start OTP listener (navigate.startOtpReceiver)</button>
+<button id="stop">2. Stop OTP listener (navigate.stopOtpReceiver)</button>
+<button id="check">3. Check marker (window.f04probe)</button>
+
+<h4>Log</h4>
+<pre id="log"></pre>
+
+<script>
+(function () {
+  var logEl = document.getElementById('log');
+  var statusEl = document.getElementById('status');
+
+  function ts() { return new Date().toISOString(); }
+
+  function log(msg) {
+    logEl.textContent = ts() + '  ' + msg + '\n' + logEl.textContent;
+  }
+
+  function bridgeState() {
+    var hasNav = typeof window.navigate !== 'undefined';
+    var hasStart = hasNav && typeof window.navigate.startOtpReceiver === 'function';
+    var hasStop = hasNav && typeof window.navigate.stopOtpReceiver === 'function';
+    return 'typeof window.navigate = ' + (typeof window.navigate) +
+           '\nstartOtpReceiver available = ' + hasStart +
+           '\nstopOtpReceiver available = ' + hasStop +
+           '\nwindow.f04probe = ' + (typeof window.f04probe === 'undefined' ? 'undefined' : String(window.f04probe));
+  }
+
+  function refresh() {
+    statusEl.textContent = bridgeState();
+  }
+
+  document.getElementById('start').onclick = function () {
+    try {
+      if (window.navigate && typeof window.navigate.startOtpReceiver === 'function') {
+        window.navigate.startOtpReceiver();
+        log('called navigate.startOtpReceiver()');
+      } else {
+        log('navigate.startOtpReceiver not available on this page');
+      }
+    } catch (e) {
+      log('error: ' + e);
+    }
+    refresh();
+  };
+
+  document.getElementById('stop').onclick = function () {
+    try {
+      if (window.navigate && typeof window.navigate.stopOtpReceiver === 'function') {
+        window.navigate.stopOtpReceiver();
+        log('called navigate.stopOtpReceiver()');
+      } else {
+        log('navigate.stopOtpReceiver not available on this page');
+      }
+    } catch (e) {
+      log('error: ' + e);
+    }
+    refresh();
+  };
+
+  document.getElementById('check').onclick = function () {
+    log('window.f04probe = ' + (typeof window.f04probe === 'undefined' ? 'undefined' : String(window.f04probe)));
+    refresh();
+  };
+
+  refresh();
+  log('page loaded');
+})();
+</script>
+</body>
+</html>
